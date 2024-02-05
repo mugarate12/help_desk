@@ -1,0 +1,42 @@
+
+# docker-compose.yml
+
+version: '3.3'
+
+services:
+  help_desk_database:
+    image: mysql:5.7
+    restart: unless-stopped
+    container_name: help_desk_database
+    env_file: ./.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$PROD_MYSQL_DB_PASSWORD
+      - MYSQL_DATABASE=$PROD_MYSQL_DB_NAME
+    ports:
+      - $DB_DOCKER_PORT_EXPOSE:$DB_DOCKER_PORT
+    expose:
+      - $DB_DOCKER_PORT_EXPOSE
+    volumes:
+      - database_data:/var/lib/mysql
+
+  help_desk_backend:
+    # restart: always
+    # network_mode: host
+    container_name: help_desk_backend
+    build: .
+    depends_on:
+      - help_desk_database
+    env_file: ./.env
+    environment:
+      - LOG_LEVEL=debug
+      - PYTHONUNBUFFERED=1
+
+      - PROD_MYSQL_DB_PORT=$DB_DOCKER_PORT
+      - PROD_MYSQL_DB_HOSTNAME=help_desk_database
+    ports:
+      - "80:80"
+    volumes:
+      - .:/code
+
+volumes: 
+  database_data:
