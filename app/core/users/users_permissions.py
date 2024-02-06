@@ -1,0 +1,6 @@
+USERS_TYPES = {
+  'ADMIN': 'ADMIN',
+  'CLIENT': 'CLIENT'
+}
+
+USERS_PERMISSIONS = {}

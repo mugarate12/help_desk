@@ -22,3 +22,7 @@ class IAdminRepository(IRepository):
     @abstractmethod
     def get_by_username(self, username: str) -> Optional[dict]:
         pass
+
+    @abstractmethod
+    def get_by_user_id(self, user_id: str) -> Optional[dict]:
+        pass

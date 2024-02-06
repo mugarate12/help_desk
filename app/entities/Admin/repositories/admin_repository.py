@@ -47,3 +47,15 @@ class AdminsRepository(IAdminRepository):
             "updated_at": admin.updated_at,
             "password": user.password
         }
+
+    def get_by_user_id(self, user_id: str) -> Optional[dict]:
+        admin = self.session.query(AdminsModel).filter(
+            AdminsModel.user_id_FK == user_id).first()
+        
+        if not admin:
+            return None
+        
+        self.session.commit()
+        self.session.refresh(admin)
+
+        return admin
