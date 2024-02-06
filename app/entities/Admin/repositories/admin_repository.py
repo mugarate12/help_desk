@@ -4,35 +4,13 @@ from app.core.database.models.admins import AdminsModel
 from app.core.database.models.users import UsersModel
 from app.entities.Admin.types.repositories.admin_repositories_types import (
     IAdminRepository,
-    AdminCreatePayload
+    UserCreatePayload
 )
 
 
 class AdminsRepository(IAdminRepository):
-    def create(self, payload: AdminCreatePayload) -> dict:
-        print(payload)
-
-        user = UsersModel(
-            first_name=payload.first_name,
-            last_name=payload.last_name,
-            username=payload.username,
-            email=payload.email,
-            password=payload.password,
-            address=payload.address,
-            city=payload.city,
-            state=payload.state,
-            zip=payload.zip,
-            country=payload.country,
-            phone=payload.phone
-        )
-
-        print('cheguei aqui 1')
-
-        self.session.add(user)
-        self.session.commit()
-        self.session.refresh(user)
-
-        print('cheguei aqui 2')
+    def create(self, payload: UserCreatePayload) -> dict:
+        user = self.user_repository.create(payload)
 
         admin = AdminsModel(
             user_id_FK=user.id
@@ -50,13 +28,9 @@ class AdminsRepository(IAdminRepository):
         }
 
     def get_by_username(self, username: str = '') -> Optional[dict]:
-        user = self.session.query(UsersModel).filter(
-            UsersModel.username == username).first()
+        user = self.user_repository.get_by_username(username)
         if not user:
             return None
-
-        self.session.commit()
-        self.session.refresh(user)
 
         admin = self.session.query(AdminsModel).filter(
             AdminsModel.user_id_FK == user.id).first()
@@ -70,5 +44,6 @@ class AdminsRepository(IAdminRepository):
             "id": admin.id,
             "user_id_FK": admin.user_id_FK,
             "created_at": admin.created_at,
-            "updated_at": admin.updated_at
+            "updated_at": admin.updated_at,
+            "password": user.password
         }

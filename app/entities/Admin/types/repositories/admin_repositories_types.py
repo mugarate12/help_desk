@@ -1,29 +1,22 @@
+from sqlalchemy.orm import Session
 from typing import Optional
 from pydantic import BaseModel
 from abc import abstractmethod
 
 from app.shared.types.repositories_types import IRepository
-
-class AdminCreatePayload(BaseModel):
-    first_name: str
-    last_name: str
-
-    username: str
-    email: str
-    password: str
-
-    address: str
-    city: str
-    state: str
-    zip: str
-    country: str
-
-    phone: str
+from app.entities.User.types.user_repository_types import UserCreatePayload
+from app.entities.User.repositories.user_repository import UserRepository
 
 
 class IAdminRepository(IRepository):
+    user_repository: UserRepository
+
+    def __init__(self, database_session: Session, user_repository: UserRepository):
+        super().__init__(database_session)
+        self.user_repository = user_repository
+
     @abstractmethod
-    def create(self, payload: AdminCreatePayload) -> Optional[dict]:
+    def create(self, payload: UserCreatePayload) -> Optional[dict]:
         pass
 
     @abstractmethod

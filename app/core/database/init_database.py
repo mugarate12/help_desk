@@ -1,13 +1,14 @@
 from app.core.database.base import Base
 from app.core.database.session import engine, get_db
 from app.core.config.settings import settings
-from app.entities.Admin.repositories.admin_repository import AdminsRepository, AdminCreatePayload
-
+from app.entities.Admin.repositories.admin_repository import AdminsRepository, UserCreatePayload
+from app.entities.User.repositories.user_repository import UserRepository
+from app.shared.hash import Hash
 
 def _create_initial_admin():
     session = next(get_db())
-    print(session)
-    admin_repository = AdminsRepository(session)
+    user_repository = UserRepository(session)
+    admin_repository = AdminsRepository(session, user_repository)
 
     admin = admin_repository.get_by_username(settings.INITIAL_ADMIN_USERNAME)
 
@@ -17,12 +18,14 @@ def _create_initial_admin():
     else:
         print(f"Creating admin {settings.INITIAL_ADMIN_USERNAME}")
 
-    payload = AdminCreatePayload(
+    hash = Hash()
+
+    payload = UserCreatePayload(
         first_name="Admin",
         last_name="Admin",
         username=settings.INITIAL_ADMIN_USERNAME,
         email=settings.INITIAL_ADMIN_EMAIL,
-        password=settings.INITIAL_ADMIN_PASSWORD,
+        password=hash.hash_password(settings.INITIAL_ADMIN_PASSWORD),
         address="123 Main St",
         city="Anytown",
         state="CA",
