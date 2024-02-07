@@ -23,7 +23,5 @@ class JWT(IJWT):
             return payload
         except jwt.ExpiredSignatureError:
             return None
-        except jwt.JWTError:
-            return None
         except Exception:
             return None
