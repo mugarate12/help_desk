@@ -21,7 +21,7 @@ user_authorization = UserAuthorization(
 
 router = APIRouter()
 
-@router.post('/login')
+@router.post('/login', response_model=dict, status_code=status.HTTP_200_OK)
 async def login(body: LoginBody):
     payload = body.dict(exclude_unset=True)
 

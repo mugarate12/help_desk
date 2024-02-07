@@ -9,4 +9,8 @@ router = APIRouter()
 async def read_root():
     return {'message': 'Hello World'}
 
+@router.get('/admins')
+async def read_root():
+    return {'message': 'Hello World'}
+
 router.include_router(session_router, tags=["session"])

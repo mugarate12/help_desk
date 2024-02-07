@@ -28,3 +28,7 @@ class IUserRepository(IRepository):
     @abstractmethod
     def get_by_username(self, username: str) -> Optional[dict]:
         pass
+
+    @abstractmethod
+    def get_by_id(self, id: str) -> Optional[dict]:
+        pass

@@ -25,3 +25,24 @@ class UserAuthorization(IUserAuthorization):
 
         token = self.jwt.create({"user_id": user.id, "role": role})
         return token
+
+    def check_authorization(self, token: str, user_type: str):
+        if token == '':
+            raise Exception('Token not found')
+
+        payload = self.jwt.decode(token)
+        if not payload:
+            raise Exception('Invalid token')
+
+        user = self.users_repository.get_by_id(payload['user_id'])
+
+        if not user:
+            raise Exception('User not found')
+
+        if user_type == payload['role']:
+            admin = self.admin_repository.get_by_user_id(user.id)
+
+            if not admin:
+                raise Exception('User not found')
+        else:
+            raise Exception('You have not permission to access this resource')

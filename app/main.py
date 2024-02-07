@@ -4,7 +4,8 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.core.config.settings import settings
 from app.router import router
-from app.core.database.init_database import init
+from app.core.database.init_database import init as init_database
+from app.middlewares import apply_middlewares
 
 
 def start_application():
@@ -27,8 +28,9 @@ def start_application():
         middleware=middleware
     )
 
+    apply_middlewares(app)
     app.include_router(router)
-    init()
+    init_database()
 
     return app
 

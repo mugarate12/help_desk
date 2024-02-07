@@ -36,3 +36,14 @@ class UserRepository(IUserRepository):
         self.session.refresh(user)
 
         return user
+
+    def get_by_id(self, id: str) -> Optional[dict]:
+        user = self.session.query(UsersModel).filter(
+            UsersModel.id == id).first()
+        if not user:
+            return None
+
+        self.session.commit()
+        self.session.refresh(user)
+
+        return user

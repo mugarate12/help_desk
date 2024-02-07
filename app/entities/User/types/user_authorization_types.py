@@ -7,7 +7,7 @@ from app.entities.User.types.user_repository_types import IUserRepository
 from app.entities.Admin.types.repositories.admin_repositories_types import IAdminRepository
 
 
-class IUserAuthorization:
+class IUserAuthorization(ABC):
     jwt: IJWT
     users_permissions: dict[str, dict[str, str]]
     hash = IHash
@@ -23,4 +23,8 @@ class IUserAuthorization:
 
     @abstractmethod
     def verify_user_and_get_token(self, username: str, password: str) -> str:
+        pass
+
+    @abstractmethod
+    def check_authorization(self, token: str, user_type: str):
         pass
