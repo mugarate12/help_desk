@@ -1,7 +1,6 @@
 from typing import Optional
 
 from app.core.database.models.admins import AdminsModel
-from app.core.database.models.users import UsersModel
 from app.entities.Admin.types.repositories.admin_repositories_types import (
     IAdminRepository,
     UserCreatePayload

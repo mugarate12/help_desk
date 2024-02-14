@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
 from typing import Optional
-from pydantic import BaseModel
 from abc import abstractmethod
 
 from app.shared.types.repositories_types import IRepository
