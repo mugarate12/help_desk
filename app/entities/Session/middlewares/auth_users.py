@@ -31,7 +31,7 @@ async def auth_users_middleware(request: Request, call_next):
 
     try:
         if 'admins' in str(path):
-            user_authorization.check_authorization(token, USERS_TYPES['CLIENT'])
+            user_authorization.check_authorization(token, USERS_TYPES['ADMIN'])
     except Exception as e:
         return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": str(e)})
 
