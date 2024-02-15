@@ -6,6 +6,7 @@ from app.shared.jwt import JWT
 from app.shared.hash import Hash
 from app.entities.User.shared.user_authorization import UserAuthorization
 from app.entities.Admin.repositories.admin_repository import AdminsRepository
+from app.entities.Client.repositories.client_repository import ClientRepository
 from app.entities.User.repositories.user_repository import UserRepository
 from app.core.users.users_permissions import USERS_TYPES
 
@@ -16,6 +17,9 @@ user_authorization = UserAuthorization(
     jwt=JWT(),
     admin_repository=AdminsRepository(
         database_session=session, user_repository=users_repository),
+    client_repository=ClientRepository(
+        database_session=session, user_repository=users_repository
+    ),
     hash=Hash(),
     users_repository=users_repository
 )
@@ -37,4 +41,3 @@ async def auth_users_middleware(request: Request, call_next):
 
     response = await call_next(request)
     return response
-    

@@ -5,7 +5,6 @@ from app.core.users.users_permissions import USERS_TYPES
 class UserAuthorization(IUserAuthorization):
     def verify_user_and_get_token(self, username: str, password: str) -> str:
         user = self.users_repository.get_by_username(username)
-        print('user: ', user)
 
         if not user:
             raise Exception('User not found')
@@ -19,6 +18,10 @@ class UserAuthorization(IUserAuthorization):
         admin = self.admin_repository.get_by_user_id(user.id)
         if admin:
             role = USERS_TYPES['ADMIN']
+
+        client = self.client_repository.get_by_user_id(user.id)
+        if client:
+            role = USERS_TYPES['CLIENT']
 
         if role == '':
             raise Exception('User not found')
