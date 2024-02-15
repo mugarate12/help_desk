@@ -58,3 +58,21 @@ class ClientRepository(IClientRepository):
         self.session.refresh(client)
 
         return client
+
+    def index(self, cursor: str = '', limit: int = 10) -> Optional[dict]:
+        clients = self.session.query(ClientsModel)
+
+        if cursor:
+            clients = clients.filter(ClientsModel.id > cursor)
+
+        clients = clients.limit(limit).all()
+
+        if not clients:
+            return []
+
+        clients = [{
+            **client.__dict__,
+            "user": self.user_repository.get_by_id(client.user_id_FK)
+        } for client in clients]
+
+        return clients

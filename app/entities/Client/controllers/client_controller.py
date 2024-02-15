@@ -22,3 +22,18 @@ async def create_user(payload: UserCreatePayload):
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    
+@router.get('/')
+async def get_all_users():
+    try:
+        session = next(get_db())
+        client_repository = ClientRepository(session, UserRepository(session))
+
+        clients =  client_repository.index()
+
+        return {
+            'result': clients
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
