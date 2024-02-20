@@ -70,9 +70,12 @@ class ClientRepository(IClientRepository):
         if not clients:
             return []
 
-        clients = [{
-            **client.__dict__,
-            "user": self.user_repository.get_by_id(client.user_id_FK)
-        } for client in clients]
+        clients_formatted = []
+        for client in clients:
+            client_dict = client.__dict__.copy()
+            user = self.user_repository.get_by_id(client_dict['user_id_FK'])
+            user = user.__dict__
 
-        return clients
+            clients_formatted.append({**client_dict, "user": user})
+
+        return clients_formatted
