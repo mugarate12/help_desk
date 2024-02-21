@@ -3,7 +3,7 @@ from typing import Optional
 from abc import abstractmethod
 
 from app.shared.types.repositories_types import IRepository
-from app.entities.User.types.user_repository_types import UserCreatePayload
+from app.entities.User.types.user_repository_types import UserCreatePayload, UserUpdatePayload
 from app.entities.User.repositories.user_repository import UserRepository
 
 

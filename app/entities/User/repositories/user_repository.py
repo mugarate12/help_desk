@@ -1,7 +1,7 @@
 from typing import Optional
 
 from app.core.database.models.users import UsersModel
-from app.entities.User.types.user_repository_types import IUserRepository, UserCreatePayload
+from app.entities.User.types.user_repository_types import IUserRepository, UserCreatePayload, UserUpdatePayload
 
 
 class UserRepository(IUserRepository):
@@ -42,6 +42,39 @@ class UserRepository(IUserRepository):
             UsersModel.id == id).first()
         if not user:
             return None
+
+        self.session.commit()
+        self.session.refresh(user)
+
+        return user
+    
+    def update_by_id(self, id: str, payload: UserUpdatePayload) -> Optional[dict]:
+        user = self.get_by_id(id)
+        if not user:
+            return None
+        
+        if payload.first_name:
+            user.first_name = payload.first_name
+        if payload.last_name:
+            user.last_name = payload.last_name
+        if payload.username:
+            user.username = payload.username
+        if payload.email:
+            user.email = payload.email
+        if payload.password:
+            user.password = payload.password
+        if payload.address:
+            user.address = payload.address
+        if payload.city:
+            user.city = payload.city
+        if payload.state:
+            user.state = payload.state
+        if payload.zip:
+            user.zip = payload.zip
+        if payload.country:
+            user.country = payload.country
+        if payload.phone:
+            user.phone = payload.phone
 
         self.session.commit()
         self.session.refresh(user)
