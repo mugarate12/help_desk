@@ -36,7 +36,7 @@ class ClientUpdateBodyByClient(ClientUpdateBody):
 
 
 @router.post('/')
-async def create_user(payload: UserCreatePayload):
+async def create_client(payload: UserCreatePayload):
     try:
         session = next(get_db())
         client_repository = ClientRepository(session, UserRepository(session))
@@ -62,8 +62,8 @@ async def get_all_clients():
         clients_formatted = []
         for client in clients:
             client_dict = client.__dict__.copy()
-            user = user_repository.get_by_id(client_dict['user_id_FK'])
-            user = user.__dict__.copy()
+            user = user_repository.get_by_id(
+                client_dict['user_id_FK']).to_dict()
 
             del user['password']
 
@@ -84,18 +84,19 @@ async def get_client(user_id: str):
         client_repository = ClientRepository(session, UserRepository(session))
 
         client = client_repository.get_by_user_id(user_id)
-        client_dict = client.__dict__.copy()
+        if not client:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Client not found")
 
         user = client_repository.user_repository.get_by_id(
-            client_dict['user_id_FK'])
-        user_dict = user.__dict__.copy()
+            client.user_id_FK).to_dict()
 
-        del user_dict['password']
+        del user['password']
 
         return {
             'result': {
-                **client_dict,
-                "user": user_dict
+                **client.to_dict(),
+                "user": user
             }
         }
     except Exception as e:
@@ -119,8 +120,6 @@ async def update_client_by_admin(user_id: str, payload: ClientUpdateBody):
         if not client:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Client not found")
-
-        client_dict = client.__dict__.copy()
 
         # update user
         update_payload = UserUpdatePayload()
@@ -155,7 +154,7 @@ async def update_client_by_admin(user_id: str, payload: ClientUpdateBody):
 
         return {
             'result': {
-                **client_dict,
+                **client.to_dict(),
                 "user": user_dict
             }
         }
@@ -194,8 +193,6 @@ async def update_client(payload: ClientUpdateBodyByClient, request: Request):
         if not client:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Client not found")
-
-        client_dict = client.__dict__.copy()
 
         # update user
         update_payload = UserUpdatePayload()
@@ -238,17 +235,17 @@ async def update_client(payload: ClientUpdateBodyByClient, request: Request):
 
         user = client_repository.user_repository.update_by_id(
             user.id, update_payload)
-        user_dict = user.__dict__.copy()
 
         return {
             'result': {
-                **client_dict,
-                "user": user_dict
+                **client.to_dict(),
+                "user": user.to_dict()
             }
         }
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
 
 @router.delete('/{user_id}')
 async def delete_client_by_admin(user_id: str):

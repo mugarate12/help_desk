@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 from app.shared.types.repositories_types import IRepository
+from app.entities.User.dto.users_dto import UserDTO
 
 
 class UserCreatePayload(BaseModel):
@@ -42,21 +43,21 @@ class UserUpdatePayload(BaseModel):
 
 class IUserRepository(IRepository):
     @abstractmethod
-    def create(self, payload: UserCreatePayload):
+    def create(self, payload: UserCreatePayload) -> UserDTO:
         pass
 
     @abstractmethod
-    def get_by_username(self, username: str) -> Optional[dict]:
+    def get_by_username(self, username: str) -> UserDTO | None:
         pass
 
     @abstractmethod
-    def get_by_id(self, id: str) -> Optional[dict]:
+    def get_by_id(self, id: str) -> UserDTO | None:
         pass
 
     @abstractmethod
-    def update_by_id(self, id: str, payload: UserUpdatePayload) -> Optional[dict]:
+    def update_by_id(self, id: str, payload: UserUpdatePayload) -> UserDTO:
         pass
 
     @abstractmethod
-    def delete_by_id(self, id: str) -> Optional[dict]:
+    def delete_by_id(self, id: str) -> UserDTO:
         pass

@@ -2,10 +2,10 @@ from typing import Optional
 
 from app.core.database.models.users import UsersModel
 from app.entities.User.types.user_repository_types import IUserRepository, UserCreatePayload, UserUpdatePayload
-
+from app.entities.User.dto.users_dto import UserDTO
 
 class UserRepository(IUserRepository):
-    def create(self, payload: UserCreatePayload):
+    def create(self, payload: UserCreatePayload) -> UserDTO:
         user = UsersModel(
             first_name=payload.first_name,
             last_name=payload.last_name,
@@ -24,9 +24,9 @@ class UserRepository(IUserRepository):
         self.session.commit()
         self.session.refresh(user)
 
-        return user
+        return UserDTO(user)
 
-    def get_by_username(self, username: str = '') -> Optional[dict]:
+    def get_by_username(self, username: str = '') -> UserDTO | None:
         user = self.session.query(UsersModel).filter(
             UsersModel.username == username).first()
         if not user:
@@ -35,9 +35,9 @@ class UserRepository(IUserRepository):
         self.session.commit()
         self.session.refresh(user)
 
-        return user
+        return UserDTO(user)
 
-    def get_by_id(self, id: str) -> Optional[dict]:
+    def get_by_id(self, id: str) -> UserDTO | None:
         user = self.session.query(UsersModel).filter(
             UsersModel.id == id).first()
         if not user:
@@ -46,12 +46,14 @@ class UserRepository(IUserRepository):
         self.session.commit()
         self.session.refresh(user)
 
-        return user
+        return UserDTO(user)
     
-    def update_by_id(self, id: str, payload: UserUpdatePayload) -> Optional[dict]:
+    def update_by_id(self, id: str, payload: UserUpdatePayload) -> UserDTO:
         user = self.get_by_id(id)
         if not user:
             return None
+        
+        user = user.to_model()
         
         if payload.first_name:
             user.first_name = payload.first_name
@@ -81,10 +83,12 @@ class UserRepository(IUserRepository):
 
         return user
 
-    def delete_by_id(self, id: str) -> Optional[dict]:
+    def delete_by_id(self, id: str) -> UserDTO:
         user = self.get_by_id(id)
         if not user:
             return None
+        
+        user = user.to_model()
 
         self.session.delete(user)
         self.session.commit()
