@@ -34,8 +34,16 @@ async def auth_users_middleware(request: Request, call_next):
         token = authorization.split('Bearer ')[1]
 
     try:
-        if 'admins' in str(path):
+        if 'admins' in path:
             user_authorization.check_authorization(token, USERS_TYPES['ADMIN'])
+    except Exception as e:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": str(e)})
+
+    try:
+        if 'admins' in path or 'clients' in path:
+            user_data = user_authorization.get_user_data_from_token(token)
+            request.state.user = user_data
+        pass
     except Exception as e:
         return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": str(e)})
 

@@ -14,5 +14,5 @@ async def read_root():
 async def read_root():
     return {'message': 'Hello World'}
 
-router.include_router(client_router, tags=["client"], prefix="/client")
+router.include_router(client_router, tags=["clients"], prefix="/clients")
 router.include_router(session_router, tags=["session"])

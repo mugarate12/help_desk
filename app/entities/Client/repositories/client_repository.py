@@ -71,3 +71,18 @@ class ClientRepository(IClientRepository):
             return []
 
         return clients
+    
+    def delete_by_user_id(self, user_id: str) -> Optional[dict]:
+        client = self.session.query(ClientsModel).filter(
+            ClientsModel.user_id_FK == user_id).first()
+
+        if not client:
+            return None
+    
+        self.session.delete(client)
+        self.session.commit()
+
+        user = self.user_repository.get_by_id(user_id)
+        self.user_repository.delete_by_id(user.id)
+
+        return client

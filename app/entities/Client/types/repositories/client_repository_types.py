@@ -29,3 +29,7 @@ class IClientRepository(IRepository):
     @abstractmethod
     def index(self, cursor: str = '', limit: int = 10) -> Optional[dict]:
         pass
+
+    @abstractmethod
+    def delete_by_user_id(self, user_id: str) -> Optional[dict]:
+        pass

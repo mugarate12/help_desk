@@ -80,3 +80,13 @@ class UserRepository(IUserRepository):
         self.session.refresh(user)
 
         return user
+
+    def delete_by_id(self, id: str) -> Optional[dict]:
+        user = self.get_by_id(id)
+        if not user:
+            return None
+
+        self.session.delete(user)
+        self.session.commit()
+
+        return user

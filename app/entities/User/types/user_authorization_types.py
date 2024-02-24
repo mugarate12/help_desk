@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from fastapi import Request
+from typing import TypedDict
 
 from app.core.users.users_permissions import USERS_PERMISSIONS
 from app.shared.types.jwt_types import IJWT
@@ -7,7 +9,11 @@ from app.entities.User.types.user_repository_types import IUserRepository
 from app.entities.Admin.types.repositories.admin_repositories_types import IAdminRepository
 from app.entities.Client.types.repositories.client_repository_types import IClientRepository
 
-class IUserAuthorization(ABC):
+class IUserData(TypedDict):
+    id: str
+    role: str
+
+class  IUserAuthorization(ABC):
     jwt: IJWT
     users_permissions: dict[str, dict[str, str]]
     hash = IHash
@@ -29,4 +35,12 @@ class IUserAuthorization(ABC):
 
     @abstractmethod
     def check_authorization(self, token: str, user_type: str):
+        pass
+
+    @abstractmethod
+    def get_user_data_from_token(self, token: str):
+        pass
+
+    @abstractmethod
+    def get_user_data_from_request(self, request: Request) -> IUserData:
         pass

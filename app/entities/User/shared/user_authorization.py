@@ -1,4 +1,6 @@
-from app.entities.User.types.user_authorization_types import IUserAuthorization
+from fastapi import Request
+
+from app.entities.User.types.user_authorization_types import IUserAuthorization, IUserData
 from app.core.users.users_permissions import USERS_TYPES
 
 
@@ -49,3 +51,24 @@ class UserAuthorization(IUserAuthorization):
                 raise Exception('User not found')
         else:
             raise Exception('You have not permission to access this resource')
+
+    def get_user_data_from_token(self, token: str):
+        if token == '':
+            raise Exception('Token not found')
+
+        payload = self.jwt.decode(token)
+        if not payload:
+            raise Exception('Invalid token')
+
+        return payload
+
+    def get_user_data_from_request(self, request: Request) -> IUserData:
+        user = request.state.user
+
+        if not user:
+            raise Exception('User not found')
+
+        return {
+            'id': user['user_id'],
+            'role': user['role']
+        }

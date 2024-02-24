@@ -5,6 +5,7 @@ from typing import Optional
 
 from app.shared.types.repositories_types import IRepository
 
+
 class UserCreatePayload(BaseModel):
     first_name: str
     last_name: str
@@ -20,6 +21,7 @@ class UserCreatePayload(BaseModel):
     country: str
 
     phone: str
+
 
 class UserUpdatePayload(BaseModel):
     first_name: Optional[str]
@@ -37,6 +39,7 @@ class UserUpdatePayload(BaseModel):
 
     phone: Optional[str]
 
+
 class IUserRepository(IRepository):
     @abstractmethod
     def create(self, payload: UserCreatePayload):
@@ -52,4 +55,8 @@ class IUserRepository(IRepository):
 
     @abstractmethod
     def update_by_id(self, id: str, payload: UserUpdatePayload) -> Optional[dict]:
+        pass
+
+    @abstractmethod
+    def delete_by_id(self, id: str) -> Optional[dict]:
         pass
